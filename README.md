@@ -1,156 +1,81 @@
 
+# RGB Plugin for Rainmeter
 
-## RGB Rainmeter Plugin
-
-The **RGB** plugin for Rainmeter generates dynamic RGB color values that cycle through the color spectrum. It outputs the RGB values as a string in the format `R,G,B` (e.g., `255,0,0`) and can be used in Rainmeter skins to create vibrant, color-changing effects.
-
----
-
-### Features
-
-- **Dynamic Color Cycling**: Continuously cycles through RGB colors for a smooth, animated effect.
-- **Customizable Speed**: Allows you to control how quickly the colors change.
-- **Easy Integration**: Outputs RGB values that can be directly used in Rainmeter meters like `FontColor` and `SolidColor`.
+The **RGB Plugin** is a powerful and flexible plugin for Rainmeter that allows users to create and manage dynamic RGB lighting effects. The plugin provides various options for color animation, brightness control, saturation adjustments, and custom lighting patterns.
 
 ---
 
-### Installation
+## Features
 
-1. **Download and Compile the Plugin**:
-   - Clone this repository or download the source code.
-   - Open the project in Visual Studio and compile it. The output `RGB.dll` will be located in the `bin\Release` directory.
-
-2. **Move the DLL**:
-   - Copy the compiled `RGB.dll` to the `Plugins` folder in your Rainmeter installation (e.g., `C:\Program Files\Rainmeter\Plugins`).
-
-3. **Reload Rainmeter**:
-   - Restart Rainmeter to ensure the plugin is loaded.
-
----
-
-### Usage
-
-Add a measure to your Rainmeter skin that uses the `RGB` plugin. Below is an example of a basic Rainmeter skin using the plugin.
-
-#### Example Skin
-
-```ini
-[Rainmeter]
-Update=16
-
-[MeasureRGB]
-Measure=Plugin
-Plugin=RGB
-Speed=5 ; Control how fast the colors cycle (default is 1.0)
-
-[Background]
-Meter=Shape 
-Shape=Rectangle 0,0,(400),(100),(8)|StrokeWidth 0 | FillColor 255,255,255,100
-DynamicVariables=1
-
-[MeterRGB]
-Meter=String
-MeasureName=MeasureRGB
-Text="RGB Color: %1"
-FontColor=[MeasureRGB]
-FontSize=16
-AntiAlias=1
-DynamicVariables=1
-```
-
-#### Parameters
-
-- **`Speed`** (optional): Determines how quickly the colors cycle. Higher values increase the speed. Default is `1.0`.
+### Key Functionalities
+- **Hue Animation**: Cycles through a spectrum of colors with customizable speed.
+- **Saturation and Brightness Animation**: Gradually adjusts saturation and brightness over time.
+- **Pulse Effect**: Simulates a pulsating light effect.
+- **Rainbow Wave**: Creates a smooth rainbow color wave effect.
+- **Breathing Effect**: Cycles saturation and brightness in a breathing pattern.
+- **Random Colors**: Generates random RGB values for dynamic, unpredictable patterns.
+- **Flicker Effect**: Adds intensity flickering to simulate lighting effects.
+- **Color Patterns**: Supports custom RGB sequences for precise control over color transitions.
+- **Glow Effect**: Creates a smooth glowing effect with adjustable speed.
+- **Gradient Sweep**: Animates through a sequence of gradient colors.
+- **Blink Effect**: Toggles brightness on and off at regular intervals.
+- **Multi-Pulse Effect**: Combines multiple pulse animations for complex light patterns.
 
 ---
 
-### Output Format
+## Installation
 
-The plugin outputs a string in the format:
+1. **Download and Install Rainmeter**  
+   Ensure you have the latest version of [Rainmeter](https://www.rainmeter.net/) installed.
 
-```
-R,G,B
-```
+2. **Install the Plugin**  
+   Place the compiled `RGB.dll` plugin file into the `Plugins` folder in your Rainmeter directory:  
+   `C:\Program Files\Rainmeter\Plugins`.
 
-For example:
 
-- `255,0,0` (Red)
-- `0,255,0` (Green)
-- `0,0,255` (Blue)
 
-This output can be used directly in Rainmeter for:
+## Parameters
 
-- `FontColor`
-- `SolidColor`
-- `GradientColor`
-
----
-
-### How It Works
-
-1. The plugin cycles through the **hue** (0–360) of the HSL color model.
-2. The hue is converted to RGB values using a `HueToRGB` function.
-3. The plugin outputs the RGB values as a comma-separated string.
-
----
-
-### Advanced Usage
-
-You can use the RGB plugin with other Rainmeter features to create more complex effects. For example, change the background color of a meter dynamically:
-
-```ini
-[Rainmeter]
-Update=16
-
-[MeasureRGB]
-Measure=Plugin
-Plugin=RGB
-Speed=5
-
-[Background]
-Meter=Shape 
-Shape=Rectangle 0,0,(400),(100),(8)|StrokeWidth 0 | FillColor 255,255,255,100
-DynamicVariables=1
-
-[MeterRGB]
-Meter=String
-X=200r
-Y=50r
-MeasureName=MeasureRGB
-Text="RGB Color: %1"
-FontColor=[MeasureRGB]
-FontSize=16
-AntiAlias=1
-StringAlign=CenterCenter
-DynamicVariables=1
-```
+| Parameter                | Type    | Default | Description                                                                                 |
+|--------------------------|---------|---------|---------------------------------------------------------------------------------------------|
+| `Speed`                  | Double  | `1.0`   | Speed of hue cycling.                                                                       |
+| `StartHue`               | Double  | `0.0`   | Starting hue value (0–360).                                                                |
+| `EndHue`                 | Double  | `360.0` | Ending hue value (0–360).                                                                  |
+| `Saturation`             | Double  | `1.0`   | Saturation level (0–1).                                                                     |
+| `Brightness`             | Double  | `1.0`   | Brightness level (0–1).                                                                     |
+| `AnimateSaturation`      | Integer | `0`     | Enable/Disable animated saturation (`1` for enable, `0` for disable).                       |
+| `SaturationSpeed`        | Double  | `0.5`   | Speed of saturation animation.                                                              |
+| `AnimateBrightness`      | Integer | `0`     | Enable/Disable animated brightness (`1` for enable, `0` for disable).                       |
+| `BrightnessSpeed`        | Double  | `0.5`   | Speed of brightness animation.                                                              |
+| `PulseEffect`            | Integer | `0`     | Enable/Disable pulse effect.                                                                |
+| `PulseSpeed`             | Double  | `1.0`   | Speed of pulse effect.                                                                      |
+| `RainbowWave`            | Integer | `0`     | Enable/Disable rainbow wave effect.                                                        |
+| `WaveSpeed`              | Double  | `1.0`   | Speed of rainbow wave.                                                                      |
+| `BreathingEffect`        | Integer | `0`     | Enable/Disable breathing effect.                                                            |
+| `RandomColors`           | Integer | `0`     | Enable/Disable random color generation.                                                     |
+| `FlickerEffect`          | Integer | `0`     | Enable/Disable flickering effect.                                                          |
+| `FlickerIntensity`       | Double  | `0.2`   | Intensity of flickering.                                                                    |
+| `ColorPattern`           | String  | `""`    | Pipe-separated list of RGB values (e.g., `255,0,0|0,255,0|0,0,255`).                        |
+| `GlowEffect`             | Integer | `0`     | Enable/Disable glow effect.                                                                 |
+| `GlowSpeed`              | Double  | `2.0`   | Speed of glow effect.                                                                       |
+| `GradientSweep`          | Integer | `0`     | Enable/Disable gradient color animation.                                                    |
+| `GradientColors`         | String  | `""`    | Pipe-separated list of RGB gradient colors (e.g., `255,0,0|0,255,0|0,0,255`).               |
+| `BlinkEffect`            | Integer | `0`     | Enable/Disable blinking effect.                                                            |
+| `BlinkSpeed`             | Double  | `1.0`   | Speed of blinking effect.                                                                   |
+| `MultiPulseEffect`       | Integer | `0`     | Enable/Disable multiple pulse effects.                                                     |
+| `MultiPulseSpeed1`       | Double  | `1.5`   | Speed of the first pulse.                                                                   |
+| `MultiPulseSpeed2`       | Double  | `2.5`   | Speed of the second pulse.                                                                  |
 
 ---
 
-### Building from Source
 
-1. Install **Visual Studio** (with C# development tools).
-2. Open the project file in the source directory.
-3. Build the solution in `Release` mode.
-4. Copy the generated `RGB.dll` to your Rainmeter `Plugins` folder.
+## Contributing
+
+Feel free to submit bug reports, feature requests, or contribute to the development of the RGB plugin. Fork this repository and submit pull requests with your enhancements.
 
 ---
 
-### Contributing
+## License
 
-Contributions are welcome! If you have ideas for improvements or encounter issues, feel free to:
+This plugin is licensed under the APACHE License. See the `LICENSE` file for details.
 
-1. Open an issue on GitHub.
-2. Fork the repository, make your changes, and submit a pull request.
-
----
-
-### License
-
-This plugin is licensed under the MIT License. Feel free to use, modify, and distribute it as long as attribution is provided.
-
----
-
-### Credits
-
-Developed by **Nasir Shahbaz**. Special thanks to the Rainmeter community for their support and resources.

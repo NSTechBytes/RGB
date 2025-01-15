@@ -1,0 +1,6 @@
+C:\Users\Nasir Shahbaz\Desktop\ItemPath\RGB\x64\Debug\RGB.dll
+C:\Users\Nasir Shahbaz\Desktop\ItemPath\RGB\x64\Debug\RGB.pdb
+C:\Users\Nasir Shahbaz\Desktop\ItemPath\RGB\obj\x64\Debug\RGB.csproj.AssemblyReference.cache
+C:\Users\Nasir Shahbaz\Desktop\ItemPath\RGB\obj\x64\Debug\RGB.csproj.CoreCompileInputs.cache
+C:\Users\Nasir Shahbaz\Desktop\ItemPath\RGB\obj\x64\Debug\RGB.dll
+C:\Users\Nasir Shahbaz\Desktop\ItemPath\RGB\obj\x64\Debug\RGB.pdb
