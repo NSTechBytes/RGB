@@ -18,6 +18,9 @@ internal class Measure
     private string[] gradientColors;
     private int gradientIndex;
 
+    // Field to track the last allocated unmanaged string pointer.
+    private IntPtr lastStringPtr = IntPtr.Zero;
+
     internal Measure()
     {
         speed = 1.0;
@@ -52,7 +55,6 @@ internal class Measure
         multiPulseSpeed2 = 2.5;
         gradientColors = Array.Empty<string>();
         gradientIndex = 0;
-
     }
 
     internal void Reload(Rainmeter.API api, ref double maxValue)
@@ -104,6 +106,9 @@ internal class Measure
 
     internal double Update()
     {
+        // Store tick count once to reuse
+        int tick = Environment.TickCount;
+
         // Update hue
         hue += speed;
         if (hue > endHue) hue = startHue + (hue - endHue);
@@ -112,7 +117,7 @@ internal class Measure
         // Rainbow wave
         if (rainbowWave)
         {
-            hue = (startHue + Math.Sin(Environment.TickCount * waveSpeed * Math.PI / 180.0) * (endHue - startHue) / 2.0) % 360.0;
+            hue = (startHue + Math.Sin(tick * waveSpeed * Math.PI / 180.0) * (endHue - startHue) / 2.0) % 360.0;
         }
 
         // Animate saturation
@@ -130,13 +135,13 @@ internal class Measure
         // Pulse effect
         if (pulseEffect)
         {
-            brightness = 0.5 + 0.5 * Math.Sin(Environment.TickCount * pulseSpeed * Math.PI / 180.0);
+            brightness = 0.5 + 0.5 * Math.Sin(tick * pulseSpeed * Math.PI / 180.0);
         }
 
         // Breathing effect
         if (breathingEffect)
         {
-            double time = Environment.TickCount * 0.002;
+            double time = tick * 0.002;
             saturation = 0.5 + 0.5 * Math.Sin(time);
             brightness = 0.5 + 0.5 * Math.Cos(time);
         }
@@ -159,7 +164,7 @@ internal class Measure
         // Glow effect
         if (glowEffect)
         {
-            brightness = 0.5 + 0.5 * Math.Sin(Environment.TickCount * glowSpeed * Math.PI / 180.0);
+            brightness = 0.5 + 0.5 * Math.Sin(tick * glowSpeed * Math.PI / 180.0);
         }
 
         // Gradient sweep
@@ -175,17 +180,15 @@ internal class Measure
         // Blink effect
         if (blinkEffect)
         {
-            brightness = (Math.Sin(Environment.TickCount * blinkSpeed * Math.PI / 180.0) > 0) ? 1.0 : 0.0;
+            brightness = (Math.Sin(tick * blinkSpeed * Math.PI / 180.0) > 0) ? 1.0 : 0.0;
         }
 
         // Multi-pulse effect
         if (multiPulseEffect)
         {
-            brightness = 0.5 + 0.3 * Math.Sin(Environment.TickCount * multiPulseSpeed1 * Math.PI / 180.0)
-                       + 0.2 * Math.Cos(Environment.TickCount * multiPulseSpeed2 * Math.PI / 180.0);
+            brightness = 0.5 + 0.3 * Math.Sin(tick * multiPulseSpeed1 * Math.PI / 180.0)
+                       + 0.2 * Math.Cos(tick * multiPulseSpeed2 * Math.PI / 180.0);
         }
-
-
 
         // Custom color pattern
         if (colorPattern.Length > 0)
@@ -200,10 +203,27 @@ internal class Measure
         return 0.0;
     }
 
-    internal string GetString()
+    // Returns the computed string in managed memory.
+    internal string GetStringValue()
     {
         var rgb = HueToRGB(hue, saturation, brightness);
         return $"{rgb.Item1},{rgb.Item2},{rgb.Item3}";
+    }
+
+    // Gets the string pointer to be used by Rainmeter.
+    internal IntPtr GetString()
+    {
+        string value = GetStringValue();
+
+        // Free previous allocation if it exists.
+        if (lastStringPtr != IntPtr.Zero)
+        {
+            Marshal.FreeHGlobal(lastStringPtr);
+            lastStringPtr = IntPtr.Zero;
+        }
+
+        lastStringPtr = Marshal.StringToHGlobalUni(value);
+        return lastStringPtr;
     }
 
     private Tuple<int, int, int> HueToRGB(double hue, double saturation, double brightness)
@@ -227,6 +247,16 @@ internal class Measure
         return Tuple.Create(R, G, B);
     }
 
+    // Cleanup method to free unmanaged memory.
+    internal void Cleanup()
+    {
+        if (lastStringPtr != IntPtr.Zero)
+        {
+            Marshal.FreeHGlobal(lastStringPtr);
+            lastStringPtr = IntPtr.Zero;
+        }
+    }
+
     public static class Plugin
     {
         [DllExport]
@@ -238,6 +268,8 @@ internal class Measure
         [DllExport]
         public static void Finalize(IntPtr data)
         {
+            Measure measure = (Measure)GCHandle.FromIntPtr(data).Target;
+            measure.Cleanup();
             GCHandle.FromIntPtr(data).Free();
         }
 
@@ -259,8 +291,7 @@ internal class Measure
         public static IntPtr GetString(IntPtr data)
         {
             Measure measure = (Measure)GCHandle.FromIntPtr(data).Target;
-            string value = measure.GetString();
-            return Marshal.StringToHGlobalUni(value);
+            return measure.GetString();
         }
     }
 }
