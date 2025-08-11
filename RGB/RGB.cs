@@ -63,6 +63,7 @@ internal class Measure
 
         // Read parameters
         speed = api.ReadDouble("Speed", 1.0);
+        hue = api.ReadDouble("Hue", 0.0);  // Fixed: Read initial hue value directly
         startHue = api.ReadDouble("StartHue", 0.0);
         endHue = api.ReadDouble("EndHue", 360.0);
         saturation = api.ReadDouble("Saturation", 1.0);
@@ -84,7 +85,6 @@ internal class Measure
         colorPattern = pattern.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
         colorIndex = 0;
 
-        hue = startHue;
         saturation = Math.Max(0.0, Math.Min(1.0, saturation));
         brightness = Math.Max(0.0, Math.Min(1.0, brightness));
 
